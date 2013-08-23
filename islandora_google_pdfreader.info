@@ -1,0 +1,7 @@
+name = Islandora Google PDF Reader
+description = View PDFs via Googles PDF reader.
+dependencies[] = islandora
+package = Islandora
+core = 7.x
+
+

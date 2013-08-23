@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * islandora_image_annotation.install
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function islandora_google_pdfreader_requirements($phase) {
+ 
+}
+
+/**
+ * Implements hook_install().
+ *
+ * @see islandora_image_annotation_islandora_required_objects()
+ */
+function islandora_google_pdfreader_install() {
+  
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function islandora_google_pdfreader_uninstall() {
+  
+}
