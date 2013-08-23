@@ -83,12 +83,10 @@ function islandora_google_pdfreader_view($object) {
 }
 
 /**
- * proprocess hook
- * @global string $base_url
+ * preprocess hook
  * @param array $variables 
  */
 function islandora_google_pdfreader_preprocess_islandora_google_pdfreader_view(&$variables) {
-  global $base_url;
   $islandora_object = $variables['islandora_object'];
   $pid = $islandora_object->id;
   $label = $islandora_object->label;
