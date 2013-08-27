@@ -16,8 +16,6 @@ function islandora_google_pdfreader_menu() {
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'islandora_google_pdfreader_access',
     'access arguments' => array(2),
-      //'access arguments' => array(ISLANDORA_IMAGE_ANNOTATION_VIEW),
-      //'file' => 'includes/google_pdfreader.inc',
   );
 
   return $items;
@@ -58,8 +56,8 @@ function islandora_google_pdfreader_access($fedora_object) {
 
 /**
  * Theme registry function
- * 
- * @return array
+ *
+ *  @return array
  */
 function islandora_google_pdfreader_view_theme($existing, $type, $theme, $path) {
   return array(
@@ -71,11 +69,10 @@ function islandora_google_pdfreader_view_theme($existing, $type, $theme, $path) 
 }
 
 /**
- * 
- * the google pdf reader view 
- * 
+ * the google pdf reader view
+ *
  * @param FedoraObject $object
- * @return string 
+ * @return string
  */
 function islandora_google_pdfreader_view($object) {
   $output = theme('islandora_google_pdfreader_view', array('islandora_object' => $object));
@@ -84,7 +81,7 @@ function islandora_google_pdfreader_view($object) {
 
 /**
  * preprocess hook
- * @param array $variables 
+ * @param array $variables
  */
 function islandora_google_pdfreader_preprocess_islandora_google_pdfreader_view(&$variables) {
   $islandora_object = $variables['islandora_object'];
