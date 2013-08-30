@@ -29,7 +29,6 @@ function islandora_google_pdfreader_menu() {
   return $items;
 }
 
-
 /**
  * determines whether or not to show this modules tab
  * @global object $user
@@ -41,7 +40,7 @@ function islandora_google_pdfreader_access($fedora_object) {
     return FALSE;
   }
   $models = $fedora_object->models;
-  $cmodel_list  = array_keys(variable_get('islandora_google_pdfreader_mappings', array()));
+  $cmodel_list = array_keys(variable_get('islandora_google_pdfreader_mappings', array()));
   $anonymous_account = user_load(0); //get the anonymous user
   //we only want to show the tab if anonymous can get to the pdf as google reader
   //will be hitting the url unauthenticated
@@ -89,12 +88,12 @@ function islandora_google_pdfreader_preprocess_islandora_google_pdfreader_view(&
   $islandora_object = $variables['islandora_object'];
   $arr = variable_get('islandora_google_pdfreader_mappings', array());
   $models = $islandora_object->models;
-  $dsid = null;
+  $dsid = NULL;
   //TODO we may want to load a list of cmodels specified in an admin
   //interface
-  $cmodel_list  = variable_get('islandora_google_pdfreader_mappings', array());
-  foreach($models as $model){
-    if(isset($cmodel_list[$model])){
+  $cmodel_list = variable_get('islandora_google_pdfreader_mappings', array());
+  foreach ($models as $model) {
+    if (isset($cmodel_list[$model])) {
       $dsid = $cmodel_list[$model]['DSID'];
     }
   }

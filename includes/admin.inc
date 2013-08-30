@@ -9,7 +9,7 @@ function islandora_google_pdfreader_admin() {
   $form = array();
   $coptions = islandora_google_pdfreader_get_content_models();
   $selected = variable_get('islandora_google_pdfreader_mappings', array());
-  
+
   $chosen = array_keys($selected);
   $pids = array_keys($coptions);
   $alink_options = array(
@@ -22,7 +22,7 @@ function islandora_google_pdfreader_admin() {
     $coptions = array($key => $label) + $coptions;
   }
 
- 
+
 
   $form['content_model_wrapper'] = array(
     '#type' => 'fieldset',
@@ -65,7 +65,7 @@ function islandora_google_pdfreader_admin() {
       '#type' => 'select',
       '#options' => $dsids,
       '#default_value' => isset($selected[$pid]['DSID']) ? $selected[$pid]['DSID'] : '',
-    );    
+    );
 
     $form['content_model_wrapper']['pdf_table']['enabled'] = array(
       '#type' => 'checkboxes',
@@ -74,7 +74,7 @@ function islandora_google_pdfreader_admin() {
     );
   }
 
- 
+
   $form['actions'] = array(
     '#type' => 'actions'
   );
@@ -90,9 +90,9 @@ function islandora_google_pdfreader_admin() {
 }
 
 /**
- * NEED VALIDATION 
+ * NEED VALIDATION
  * @param type $form
- * @param type $form_state 
+ * @param type $form_state
  */
 function islandora_google_pdfreader_admin_submit($form, &$form_state) {
   $enabled = array_filter($form_state['values']['pdf_table']['enabled']);
@@ -100,13 +100,11 @@ function islandora_google_pdfreader_admin_submit($form, &$form_state) {
   foreach ($enabled as $label => $pid) {
     $content_model_mappings[$pid]['DSID'] = $form_state['values']['pdf_table']['DSID'][$pid];
   }
-  // variable_set('islandora_image_annotation_djatoka_path',$form_state['values']['islandora_image_annotation_djatoka_path']);
   variable_set('islandora_google_pdfreader_mappings', $content_model_mappings);
- 
 }
 
 /**
- * 
+ *
  * themes the form table.
  *
  * @param array $element Drupal Form Element.
@@ -125,7 +123,7 @@ function theme_islandora_google_pdfreader_admin_table($variables) {
       $row[] = array('data' => drupal_render($form['enabled'][$key]));
       $row[] = array('data' => drupal_render($form['name'][$key]), 'title' => $key);
       $row[] = array('data' => drupal_render($form['content_model'][$key]));
-      $row[] = array('data' => drupal_render($form['DSID'][$key]));      
+      $row[] = array('data' => drupal_render($form['DSID'][$key]));
 
       // add to rows
       $rows[] = array('data' => $row, 'class' => array('draggable'));
@@ -135,11 +133,11 @@ function theme_islandora_google_pdfreader_admin_table($variables) {
   // Individual table headers.
   $header = array();
 
-  $header[] = array('data' => t('Enable Annotating'));
+  $header[] = array('data' => t('Enable Google Reader'));
   $header[] = array('data' => t('Content Model'));
   $header[] = array('data' => t('PID'));
   $header[] = array('data' => t('DSID'));
-  
+
 
   // render form
   $output = '';
@@ -182,9 +180,9 @@ function islandora_google_pdfreader_get_dsids_from_dscomp($pid) {
   $fedora_object = islandora_object_load($pid);
   $dsids = islandora_get_datastreams_requirements_from_content_model($fedora_object);
   $output = array();
-  foreach($dsids as $dsid){
-    if(strstr($dsid['mime'][0], 'pdf')){
-      $output [(string)$dsid['id']] = (string) $dsid['id'];
+  foreach ($dsids as $dsid) {
+    if (strstr($dsid['mime'][0], 'pdf')) {
+      $output [(string) $dsid['id']] = (string) $dsid['id'];
     }
   }
   return $output;
