@@ -16,6 +16,7 @@ function islandora_google_pdfreader_menu() {
     'file' => 'includes/admin.inc',
     'type' => MENU_NORMAL_ITEM,
   );
+
   $items['islandora/object/%islandora_object/googlepdfreader'] = array(
     'weight' => -3,
     'title' => 'Read Online',
@@ -23,6 +24,16 @@ function islandora_google_pdfreader_menu() {
     'page arguments' => array(2),
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'islandora_google_pdfreader_access',
+    'access arguments' => array(2),
+  );
+
+  $items['islandora/object/%islandora_object/pdfdownloader'] = array(
+    'weight' => 99,
+    'title' => 'Download',
+    'page callback' => 'islandora_pdfdownloader_view',
+    'page arguments' => array(2),
+    'type' => MENU_LOCAL_TASK,
+    'access callback' => 'islandora_pdfdownloader_access',
     'access arguments' => array(2),
   );
 
@@ -53,6 +64,24 @@ function islandora_google_pdfreader_access($fedora_object) {
 }
 
 /**
+ * determines whether or not to show the download tab
+ * @global object $user
+ * @param FedoraObject $fedora_object
+ * @return boolean
+ */
+function islandora_pdfdownloader_access($fedora_object) {
+  if (!isset($fedora_object)) {
+    return FALSE;
+  }
+
+  if ($fedora_object->getDatastream("PDF")) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
  * Theme registry function
  *
  *  @return array
@@ -63,6 +92,12 @@ function islandora_google_pdfreader_theme($existing, $type, $theme, $path) {
       'template' => 'theme/islandora-google-pdfreader',
       'variables' => array('islandora_objects' => NULL),
     ),
+
+    'islandora_pdfdownloader_view' => array(
+      'template' => 'theme/islandora-pdfdownloader',
+      'variables' => array('islandora_objects' => NULL),
+    ),
+
     'islandora_google_pdfreader_admin_table' => array(
       'render element' => 'form',
     ),
@@ -77,6 +112,17 @@ function islandora_google_pdfreader_theme($existing, $type, $theme, $path) {
  */
 function islandora_google_pdfreader_view($object) {
   $output = theme('islandora_google_pdfreader_view', array('islandora_object' => $object));
+  return $output;
+}
+
+/**
+ * the PDF download view
+ *
+ * @param FedoraObject $object
+ * @return string
+ */
+function islandora_pdfdownloader_view($object) {
+  $output = theme('islandora_pdfdownloader_view', array('islandora_object' => $object));
   return $output;
 }
 
@@ -103,4 +149,16 @@ function islandora_google_pdfreader_preprocess_islandora_google_pdfreader_view(&
     drupal_set_title($label);
   }
   $variables['viewer_url'] = 'http://docs.google.com/viewer?url=' . url("islandora/object/{$pid}/datastream/$dsid/download", array('absolute' => TRUE)) . '&embedded=TRUE';
+}
+
+/**
+ * preprocess pdfdownloader_view hook
+ * @param array $variables
+ */
+function islandora_google_pdfreader_preprocess_islandora_pdfdownloader_view(&$variables) {
+  require_once(DRUPAL_ROOT .'/sites/all/modules/islandora/includes/datastream.inc');
+  global $base_url;
+  $islandora_object = $variables['islandora_object'];
+  $variables['pdf_download_path'] = '../../../' . (islandora_datastream_get_url($islandora_object->getDatastream("PDF"), 'download'));
+  $variables['pdf_download_image'] = $base_url . '/' . drupal_get_path('module', 'islandora_google_pdfreader') . '/images/pdf_download_logo.png';
 }

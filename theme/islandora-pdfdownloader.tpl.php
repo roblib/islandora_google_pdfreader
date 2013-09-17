@@ -6,20 +6,11 @@
 ?>
 
 <?php if (isset($variables['pdf_download_path'])): ?>
-  <?php drupal_add_css(drupal_get_path('module', 'islandora_google_pdfreader') . '/css/islandora_google_pdfreader.css'); ?>
-  <br/>
-  <div id="pdf-download-table">
-    <table class="noborder">
-      <tr></tr>
-      <tr>
-        <td class="pdf-download-image-cell">
-          <a href = '<?php print $variables['pdf_download_path'] ?>'>
-            <img src = "<?php print $variables['pdf_download_image'] ?>" /></a>
-        </td>
-        <td class="pdf-download-text-cell">
-          <a href = '<?php print $variables['pdf_download_path'] ?>'>Download</a>
-        </td>
-      </tr>
-    </table>
+  <div style="float:left; position:relative; left:20px">
+    <a href = '<?php print $variables['pdf_download_path'] ?>'>
+      <img src = "<?php print $variables['pdf_download_image'] ?>" /></a>
+  </div>
+  <div style="position:relative; left:35px">
+    <a href = '<?php print $variables['pdf_download_path'] ?>'><br/>Download</a>
   </div>
 <?php endif; ?>
