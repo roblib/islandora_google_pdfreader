@@ -18,7 +18,7 @@ function islandora_google_pdfreader_menu() {
   );
   $items['islandora/object/%islandora_object/googlepdfreader'] = array(
     'weight' => -3,
-    'title' => 'Read Online',
+    'title' => 'Read',
     'page callback' => 'islandora_google_pdfreader_view',
     'page arguments' => array(2),
     'type' => MENU_LOCAL_TASK,
@@ -39,16 +39,17 @@ function islandora_google_pdfreader_access($fedora_object) {
   if (!isset($fedora_object)) {
     return FALSE;
   }
+  //require_once(DRUPAL_ROOT .'/sites/all/modules/islandora/includes/datastream.inc');
   $models = $fedora_object->models;
   $cmodel_list = array_keys(variable_get('islandora_google_pdfreader_mappings', array()));
-  $anonymous_account = user_load(0); //get the anonymous user
-  //we only want to show the tab if anonymous can get to the pdf as google reader
-  //will be hitting the url unauthenticated
   $same = array_intersect($cmodel_list, $models);
-  if (count($same) > 0 && user_access(FEDORA_VIEW_OBJECTS, $anonymous_account)) {
+
+  //dpr($fedora_object);
+  //echo islandora_datastream_get_url($fedora_object->getDatastream("PDF")))
+
+  if (count($same) > 0 ) { //&& $fedora_object->getDatastream("PDF")) {
     return TRUE;
   }
-
   return FALSE;
 }
 
@@ -103,4 +104,35 @@ function islandora_google_pdfreader_preprocess_islandora_google_pdfreader_view(&
     drupal_set_title($label);
   }
   $variables['viewer_url'] = 'http://docs.google.com/viewer?url=' . url("islandora/object/{$pid}/datastream/$dsid/download", array('absolute' => TRUE)) . '&embedded=TRUE';
+
+
+
+
+
+
+
+  $anonymous_account = user_load(0); //get the anonymous user
+
+  //we only want to show the tab if anonymous can get to the pdf as google reader
+  //will be hitting the url unauthenticated
+
+  $variables['show_viewer'] = FALSE;
+
+  if (user_access(FEDORA_VIEW_OBJECTS, $anonymous_account)) {
+    $variables['show_viewer'] = TRUE;
+  }
+
+
+
+
+
+
+
+
+  //require_once(DRUPAL_ROOT .'/sites/all/modules/islandora/includes/datastream.inc');
+  global $base_url;
+  $islandora_object = $variables['islandora_object'];
+  //$variables['pdf_download_path'] = '../../../' . (islandora_datastream_get_url($islandora_object->getDatastream("PDF"), 'download'));
+  $variables['pdf_download_image'] = $base_url . '/' . drupal_get_path('module', 'islandora_google_pdfreader') . '/images/pdf_download_logo.png';
+
 }
