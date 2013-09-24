@@ -3,3 +3,4 @@ description = View PDFs via Googles PDF reader.
 dependencies[] = islandora
 package = Islandora
 core = 7.x
+stylesheets[all][] = css/islandora_google_pdfreader.css
