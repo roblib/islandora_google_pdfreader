@@ -40,9 +40,17 @@ function islandora_google_pdfreader_access($fedora_object) {
     return FALSE;
   }
   $models = $fedora_object->models;
-  $cmodel_list = array_keys(variable_get('islandora_google_pdfreader_mappings', array()));
+  $cmodel_list = variable_get('islandora_google_pdfreader_mappings', array());
+
+  $dsid = NULL;
+  foreach ($models as $model) {
+    if (isset($cmodel_list[$model])) {
+      $dsid = $cmodel_list[$model]['DSID'];
+    }
+  }
+  $cmodel_list = array_keys($cmodel_list);
   $same = array_intersect($cmodel_list, $models);
-  if (count($same) > 0 && $fedora_object->getDatastream("PDF")) {
+  if (count($same) > 0 && $fedora_object->getDatastream($dsid)) {
     return TRUE;
   }
   return FALSE;
@@ -111,6 +119,6 @@ function islandora_google_pdfreader_preprocess_islandora_google_pdfreader_view(&
   global $base_url;
   require_once(DRUPAL_ROOT .'/sites/all/modules/islandora/includes/datastream.inc');
   $islandora_object = $variables['islandora_object'];
-  $variables['pdf_download_path'] = '../../../' . (islandora_datastream_get_url($islandora_object->getDatastream("PDF"), 'download'));
+  $variables['pdf_download_path'] = '../../../' . (islandora_datastream_get_url($islandora_object->getDatastream($dsid), 'download'));
   $variables['pdf_download_image'] = $base_url . '/' . drupal_get_path('module', 'islandora_google_pdfreader') . '/images/pdf_download.png';
 }

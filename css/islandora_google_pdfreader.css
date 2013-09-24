@@ -1,0 +1,16 @@
+.islandora-google-pdfreader-iframe-wrapper iframe {
+  width:600px;
+  height:600px;
+  border:none;
+}
+
+.islandora-download-image-wrapper {
+  position:relative;
+  float:left;
+  left:5px;
+}
+
+.islandora-download-text-wrapper {
+  position:relative;
+  left:20px;
+}
