@@ -2,8 +2,15 @@
 
 /**
  * @file
- * Admin callbacks for Islandora Google PDF Reader
+ * Admin callbacks for Islandora Google PDF Reader.
  *
+ */
+
+/**
+ * The admin form.
+ *
+ * @return array
+ *   A form
  */
 function islandora_google_pdfreader_admin() {
   $form = array();
@@ -23,7 +30,6 @@ function islandora_google_pdfreader_admin() {
   }
 
 
-
   $form['content_model_wrapper'] = array(
     '#type' => 'fieldset',
     '#title' => t('Select Content Models'),
@@ -35,7 +41,7 @@ function islandora_google_pdfreader_admin() {
     '#type' => 'item',
     '#title' => t('Select Content Models for the Google Pdf Reader'),
     '#description' => t('Content Models selected here will add a tab for the Google Pdf Reader.'),
-    '#tree' => TRUE, // this attribute is important to return the submitted values in a deeper nested arrays in
+    '#tree' => TRUE,
     '#theme' => 'islandora_google_pdfreader_admin_table',
   );
 
@@ -45,19 +51,16 @@ function islandora_google_pdfreader_admin() {
       continue;
     }
     $options[$pid] = '';
-    // label
+
     $form['content_model_wrapper']['pdf_table']['name'][$pid] = array(
       '#type' => 'item',
       '#markup' => l($label, "islandora/object/$pid", $alink_options),
     );
-    // pid
+
     $form['content_model_wrapper']['pdf_table']['content_model'][$pid] = array(
       '#type' => 'item',
       '#markup' => $pid,
     );
-
-    // dsid
-
 
     $form['content_model_wrapper']['pdf_table']['DSID'][$pid] = array(
       '#prefix' => '<div class="dsidSelect">',
@@ -90,9 +93,12 @@ function islandora_google_pdfreader_admin() {
 }
 
 /**
- * NEED VALIDATION
- * @param type $form
- * @param type $form_state
+ * Admin form submit.
+ *
+ * @param array $form
+ *   the form
+ * @param array $form_state
+ *   the form state
  */
 function islandora_google_pdfreader_admin_submit($form, &$form_state) {
   $enabled = array_filter($form_state['values']['pdf_table']['enabled']);
@@ -104,11 +110,15 @@ function islandora_google_pdfreader_admin_submit($form, &$form_state) {
 }
 
 /**
+ * Themes the form table.
  *
- * themes the form table.
+ * @param array $variables
+ *   the theme variables array
  *
- * @param array $element Drupal Form Element.
+ * @internal param array $element Drupal Form Element.
+ *
  * @return string
+ *   html
  */
 function theme_islandora_google_pdfreader_admin_table($variables) {
   // set form
@@ -121,11 +131,12 @@ function theme_islandora_google_pdfreader_admin_table($variables) {
       $row = array();
 
       $row[] = array('data' => drupal_render($form['enabled'][$key]));
-      $row[] = array('data' => drupal_render($form['name'][$key]), 'title' => $key);
+      $row[] = array(
+        'data' => drupal_render($form['name'][$key]),
+        'title' => $key
+      );
       $row[] = array('data' => drupal_render($form['content_model'][$key]));
       $row[] = array('data' => drupal_render($form['DSID'][$key]));
-
-      // add to rows
       $rows[] = array('data' => $row, 'class' => array('draggable'));
     }
   }
@@ -138,14 +149,22 @@ function theme_islandora_google_pdfreader_admin_table($variables) {
   $header[] = array('data' => t('PID'));
   $header[] = array('data' => t('DSID'));
 
-
-  // render form
   $output = '';
-  $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'islandora_google_pdfreader_admin_table')));
+  $output .= theme('table', array(
+    'header' => $header,
+    'rows' => $rows,
+    'attributes' => array('id' => 'islandora_google_pdfreader_admin_table')
+  ));
   $output .= drupal_render_children($form);
   return $output;
 }
 
+/**
+ * Get all content models from Fedora.
+ *
+ * @return array
+ *   associative array of content models
+ */
 function islandora_google_pdfreader_get_content_models() {
   module_load_include('inc', 'islandora', 'includes/tuque');
   $repository = new IslandoraTuque();
@@ -174,6 +193,15 @@ function islandora_google_pdfreader_get_content_models() {
   return $return_array;
 }
 
+/**
+ * Find pdf type datastreams of the given object.
+ *
+ * @param string $pid
+ *   The pid of the object
+ *
+ * @return array
+ *   array of datastreams that have a pdf mimetype
+ */
 function islandora_google_pdfreader_get_dsids_from_dscomp($pid) {
   module_load_include('inc', 'islandora', 'includes/tuque');
   module_load_include('inc', 'islandora', 'includes/utilities');

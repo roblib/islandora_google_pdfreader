@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * load the google reader via an iframe.
+ * Load the google reader via an iframe.
  */
 ?>
 

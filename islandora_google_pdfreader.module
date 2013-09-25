@@ -2,8 +2,14 @@
 
 /**
  * @file
- *
  * Hooks and callbacks for this module.
+ */
+
+/**
+ * Implements hook_menu.
+ *
+ * @return array
+ *   the menu array
  */
 function islandora_google_pdfreader_menu() {
   $items = array();
@@ -30,10 +36,15 @@ function islandora_google_pdfreader_menu() {
 }
 
 /**
- * determines whether or not to show this modules tab
+ * Determines whether or not to show this modules tab.
+ *
  * @global object $user
+ *
  * @param FedoraObject $fedora_object
- * @return boolean
+ *   The fedora object we are viewing
+ *
+ * @return bool
+ *   TRUE if we have permission to view and the object has the expected datastream
  */
 function islandora_google_pdfreader_access($fedora_object) {
   if (!isset($fedora_object)) {
@@ -50,18 +61,19 @@ function islandora_google_pdfreader_access($fedora_object) {
   }
   $cmodel_list = array_keys($cmodel_list);
   $same = array_intersect($cmodel_list, $models);
-  if (count($same) > 0 && $fedora_object->getDatastream($dsid)) {
+  if (count($same) > 0 && isset($fedora_object[$dsid])) {
     return TRUE;
   }
   return FALSE;
 }
 
 /**
- * Theme registry function
+ * Theme registry function.
  *
- *  @return array
+ * @return array
+ *   theme functions
  */
-function islandora_google_pdfreader_theme($existing, $type, $theme, $path) {
+function islandora_google_pdfreader_theme() {
   return array(
     'islandora_google_pdfreader_view' => array(
       'template' => 'theme/islandora-google-pdfreader',
@@ -74,10 +86,13 @@ function islandora_google_pdfreader_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * the google pdf reader view
+ * The google pdf reader view.
  *
  * @param FedoraObject $object
+ *   The object we are viewing
+ *
  * @return string
+ *   html
  */
 function islandora_google_pdfreader_view($object) {
   $output = theme('islandora_google_pdfreader_view', array('islandora_object' => $object));
@@ -85,16 +100,16 @@ function islandora_google_pdfreader_view($object) {
 }
 
 /**
- * preprocess hook
+ * Preprocess hook.
+ *
  * @param array $variables
+ *   theme variables array
  */
 function islandora_google_pdfreader_preprocess_islandora_google_pdfreader_view(&$variables) {
   $islandora_object = $variables['islandora_object'];
   $arr = variable_get('islandora_google_pdfreader_mappings', array());
   $models = $islandora_object->models;
   $dsid = NULL;
-  //TODO we may want to load a list of cmodels specified in an admin
-  //interface
   $cmodel_list = variable_get('islandora_google_pdfreader_mappings', array());
   foreach ($models as $model) {
     if (isset($cmodel_list[$model])) {
@@ -108,17 +123,14 @@ function islandora_google_pdfreader_preprocess_islandora_google_pdfreader_view(&
   }
   $variables['viewer_url'] = 'http://docs.google.com/viewer?url=' . url("islandora/object/{$pid}/datastream/$dsid/download", array('absolute' => TRUE)) . '&embedded=TRUE';
 
-  $anonymous_account = user_load(0); //get the anonymous user
-  //we only want to show the Google viewer if anonymous can get to the pdf as google reader
-  //will be hitting the url unauthenticated
+  $anonymous_account = user_load(0);
   $variables['show_viewer'] = FALSE;
   if (user_access(FEDORA_VIEW_OBJECTS, $anonymous_account)) {
     $variables['show_viewer'] = TRUE;
   }
 
   global $base_url;
-  require_once(DRUPAL_ROOT .'/sites/all/modules/islandora/includes/datastream.inc');
-  $islandora_object = $variables['islandora_object'];
-  $variables['pdf_download_path'] = '../../../' . (islandora_datastream_get_url($islandora_object->getDatastream($dsid), 'download'));
+  module_load_include('inc', 'islandora', 'includes/datastream');
+  $variables['pdf_download_path'] = url(islandora_datastream_get_url($islandora_object->getDatastream($dsid), 'download'));
   $variables['pdf_download_image'] = $base_url . '/' . drupal_get_path('module', 'islandora_google_pdfreader') . '/images/pdf_download.png';
 }
